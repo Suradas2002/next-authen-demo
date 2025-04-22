@@ -1,0 +1,7 @@
+{
+    "loginFailed": "เข้าสู่ระบบไม่สำเร็จ",
+    "missingIdentifierOrPassword": "ไม่พบอีเมลหรือรหัสผ่าน",
+    "noResponseFromServer": "ไม่พบการตอบกลับจากเซิร์ฟเวอร์",
+    "unknownError": "เกิดข้อผิดพลาดที่ไม่รู้จัก"
+  }
+  

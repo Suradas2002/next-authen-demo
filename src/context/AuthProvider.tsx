@@ -1,5 +1,5 @@
 "use client";
-import { AuthContext } from "@/้hooks/useAuth";
+import { AuthContext } from "@/hooks/useAuth";
 import { AuthContextType, User } from "@/types/auth";
 import React, { useEffect, useState, useCallback } from "react";
 

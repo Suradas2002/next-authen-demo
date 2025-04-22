@@ -3,7 +3,7 @@ import React, {  useEffect, useState, } from 'react'
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useAuthContext } from '@/้hooks/useAuth';
+import { useAuthContext } from '@/hooks/useAuth';
 import { Controller, Form, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import Link from 'next/link';
@@ -16,15 +16,9 @@ const LogInSchema = z.object({
   staySignedIn: z.boolean(),
 });
 
-type SocialProvider = 'google' | 'facebook' | 'line';
 
-interface SocialButtonProps {
-  provider: SocialProvider;
-  bgColor?: string;
-  textColor?: string;
-  hoverBg?: string;
-}
-;
+
+
 
 
 const Login =() =>  {
@@ -180,7 +174,7 @@ const Login =() =>  {
             <div className='flex justify-between pb-2'>
               <a href={"../pages/forgetPassword"} className="text-cyan-500 hover:text-pink-300 text-sm float-left" > Forgot your password?</a>
               
-              <a href={"../pages/signup"} className="text-cyan-500 hover:text-pink-300 text-sm float-left">Sign Up</a>
+              <a href={"../pages/register"} className="text-cyan-500 hover:text-pink-300 text-sm float-left">Sign Up</a>
               
             </div>
             <div className="w-full flex justify-center pt-2">

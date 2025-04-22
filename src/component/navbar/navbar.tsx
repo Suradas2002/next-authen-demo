@@ -1,8 +1,11 @@
 "use client";
 
-import { AuthContext, useAuthContext } from "@/้hooks/useAuth";
-import Link from "next/link";
+import { AuthContext, useAuthContext } from "@/hooks/useAuth";
 import { useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
+import {useLocale, useTranslations} from 'next-intl';
+import { getPathname, Link, usePathname, useRouter} from '@/i18n/navigation';
+
+
 
 export default function Navbar() {
    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -14,17 +17,25 @@ export default function Navbar() {
    const toggleDropdownUser = () => setDropdownUser(!DropdownUser)
    const toggleMenu = () => setIsMenuOpen(!isMenuOpen) 
    const closeMenu = () => setIsMenuOpen(false);
+   const router = useRouter();
+   const pathname = usePathname();
+   const currentLocale = useLocale(); 
+
+
    
    const { user, status } = useAuthContext();
-   const session = useAuthContext()
+   const t = useTranslations('Navbar');
 
+   
+   
 
-      const handleLogout = async () => {
+  const handleLogout = async () => {
         await fetch('./api/logout')
         window.location.href = '/'
         
       };
-      
+
+
    
  
    useEffect(() => {
@@ -56,6 +67,13 @@ export default function Navbar() {
       document.body.style.overflow = ''; 
     };
   }, [isMenuOpen]);
+
+  const handleChangeLang = (newLocale: string) => {
+    if (newLocale === currentLocale) return;
+  
+    router.push(pathname, { locale: newLocale });
+  };
+
  
    return (
      <div className="fixed top-0 left-0 right-0  bg-[#83898f]  z-50 opacity-75">
@@ -73,27 +91,27 @@ export default function Navbar() {
           <ul className="hidden lg:flex flex-row text-white p-7 space-x-2 overflow-x-auto max-w-full flex-wrap ">
             <li>
               <a href="#" className="p-4 border-r-1 border-gray-200 hover:text-black">
-                หน้าหลัก
+                {t('menu1')}
               </a>
             </li>
             <li>
               <a href="#" className="p-4 border-r-1 border-gray-200 hover:text-black">
-                Pop-Up Store
+              {t('menu2')}
               </a>
             </li>
             <li>
               <a href="#" className="p-4 border-r-1 border-gray-200 hover:text-black">
-                100 เดียวเที่ยวได้งาน
+              {t('menu3')}
               </a>
             </li>
             <li>
               <a href="#" className="p-4 border-r-1 border-gray-200 hover:text-black">
-                สิทธิพิเศษ
+              {t('menu5')}
               </a>
             </li>
             <li>
               <a href="#" className="p-4 border-r-1 border-gray-200 hover:text-black">
-                แบบสอบถาม
+              {t('menu6')}
               </a>
             </li>
           </ul>
@@ -110,13 +128,13 @@ export default function Navbar() {
           <span className="flex flex-grow justify-center items-center ">{user.username}</span>
         </button>
       ) : (
-            <Link href={"./local/pages/login"}>
+            <Link href={"./pages/login"}>
             <button
                 type="button"
                 className="text-white bg-gradient-to-br from-green-400 to-blue-600 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-green-200 dark:focus:ring-green-800 font-medium rounded-lg text-[14px] px-4 py-2 text-center me-2 mb-2 flex items-center w-30 h-8"
               >
                 <img src="/padlock-svgrepo-com.svg" alt="padLock" className="w-5 h-5 mr-2" />
-                เข้าสู่ระบบ
+                {t('login')}
               </button>
             </Link>
       )}
@@ -143,7 +161,7 @@ export default function Navbar() {
                   type="button"
                   className=" w-20 h-8 lg:flex hidden items-center font-medium justify-center px-4 py-2 text-sm text-white dark:text-black rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-white dark:hover:text-black hover:text-black group"
                 >
-                  <p className="text-white group-hover:text-black">ไทย</p>
+                  <p className="text-white group-hover:text-black">{t('Translate')}</p>
                   <svg
                     viewBox="0 0 24 24"
                     fill="none"
@@ -171,7 +189,8 @@ export default function Navbar() {
                   <ul className="pb-4 text-sm text-gray-700 dark:text-gray-200">
                     <li>
                       <a
-                        href="#"
+                     
+                        onClick={(e) =>  handleChangeLang("en")}
                         className="block p-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                       >
                         <div className="inline-flex items-center space-x-2">
@@ -186,7 +205,10 @@ export default function Navbar() {
                     </li>
                     <li>
                       <a
-                        href="#"
+                        onClick={(e) => {
+                          e.preventDefault();  // ยับยั้งการรีเฟรชหน้า
+                          handleChangeLang("th");
+                        }}
                         className="block p-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                       >
                         <div className="inline-flex items-center space-x-3">
@@ -213,12 +235,12 @@ export default function Navbar() {
                    transition-transform duration-300 ease-in-out transform  ${isMenuOpen ? "translate-x-0" : "translate-x-full"} ` }
                 >
                   <div className="flex flex-row items-center space-x-2">
-                      <a href="#" className="p-4 hover:text-gray-300 flex items-center">
+                      <a href="#" onClick={(e) =>  handleChangeLang("en")} className="p-4 hover:text-gray-300 flex items-center" >
                         <img src="/united-kingdom-uk-svgrepo-com.svg" alt="united-kingdom" className="w-5 h-5 mr-2" />
                         English
                       </a>
-                      <a href="#" className="p-4 hover:text-gray-300 flex items-center">
-                        <img src="/flag-for-flag-thailand-svgrepo-com.svg" alt="Thailand" className="w-5 h-5 mr-2" />
+                      <a href="#" onClick={(e) =>  handleChangeLang("th")} className="p-4 hover:text-gray-300 flex items-center">
+                        <img src="/flag-for-flag-thailand-svgrepo-com.svg" alt="Thailand" className="w-5 h-5 mr-2"  />
                         ไทย
                       </a>
                   </div>
@@ -227,23 +249,23 @@ export default function Navbar() {
                   <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 mr-2" x="0px" y="0px" width="100" height="100" viewBox="0 0 24 24">
                   <path fill="white" stroke="white"  strokeWidth="1"    d="M 12 2.0996094 L 1 12 L 4 12 L 4 21 L 11 21 L 11 15 L 13 15 L 13 21 L 20 21 L 20 12 L 23 12 L 12 2.0996094 z M 12 4.7910156 L 18 10.191406 L 18 11 L 18 19 L 15 19 L 15 13 L 9 13 L 9 19 L 6 19 L 6 10.191406 L 12 4.7910156 z"></path>
                   </svg>
-                    หน้าหลัก
+                    {t('menu1')}
                   </a>
                   <a href="#" className="flex items-center p-4 hover:text-gray-300">
                   <svg stroke="currentColor" fill="none" strokeWidth="0" viewBox="0 0 15 15" className="w-5 h-5 mr-2" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" clipRule="evenodd" d="M0 1.5C0 1.22386 0.223858 1 0.5 1H2.5C2.77614 1 3 1.22386 3 1.5C3 1.77614 2.77614 2 2.5 2H0.5C0.223858 2 0 1.77614 0 1.5ZM4 1.5C4 1.22386 4.22386 1 4.5 1H14.5C14.7761 1 15 1.22386 15 1.5C15 1.77614 14.7761 2 14.5 2H4.5C4.22386 2 4 1.77614 4 1.5ZM4 4.5C4 4.22386 4.22386 4 4.5 4H11.5C11.7761 4 12 4.22386 12 4.5C12 4.77614 11.7761 5 11.5 5H4.5C4.22386 5 4 4.77614 4 4.5ZM0 7.5C0 7.22386 0.223858 7 0.5 7H2.5C2.77614 7 3 7.22386 3 7.5C3 7.77614 2.77614 8 2.5 8H0.5C0.223858 8 0 7.77614 0 7.5ZM4 7.5C4 7.22386 4.22386 7 4.5 7H14.5C14.7761 7 15 7.22386 15 7.5C15 7.77614 14.7761 8 14.5 8H4.5C4.22386 8 4 7.77614 4 7.5ZM4 10.5C4 10.2239 4.22386 10 4.5 10H11.5C11.7761 10 12 10.2239 12 10.5C12 10.7761 11.7761 11 11.5 11H4.5C4.22386 11 4 10.7761 4 10.5ZM0 13.5C0 13.2239 0.223858 13 0.5 13H2.5C2.77614 13 3 13.2239 3 13.5C3 13.7761 2.77614 14 2.5 14H0.5C0.223858 14 0 13.7761 0 13.5ZM4 13.5C4 13.2239 4.22386 13 4.5 13H14.5C14.7761 13 15 13.2239 15 13.5C15 13.7761 14.7761 14 14.5 14H4.5C4.22386 14 4 13.7761 4 13.5Z" fill="currentColor"></path></svg>
-                    Pop-Up Store
+                    {t('menu2')}
                   </a>
                   <a href="#" className="flex items-center p-4 hover:text-gray-300">
                   <svg stroke="currentColor" fill="none" strokeWidth="0" viewBox="0 0 15 15" className="w-5 h-5 mr-2" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" clipRule="evenodd" d="M0 1.5C0 1.22386 0.223858 1 0.5 1H2.5C2.77614 1 3 1.22386 3 1.5C3 1.77614 2.77614 2 2.5 2H0.5C0.223858 2 0 1.77614 0 1.5ZM4 1.5C4 1.22386 4.22386 1 4.5 1H14.5C14.7761 1 15 1.22386 15 1.5C15 1.77614 14.7761 2 14.5 2H4.5C4.22386 2 4 1.77614 4 1.5ZM4 4.5C4 4.22386 4.22386 4 4.5 4H11.5C11.7761 4 12 4.22386 12 4.5C12 4.77614 11.7761 5 11.5 5H4.5C4.22386 5 4 4.77614 4 4.5ZM0 7.5C0 7.22386 0.223858 7 0.5 7H2.5C2.77614 7 3 7.22386 3 7.5C3 7.77614 2.77614 8 2.5 8H0.5C0.223858 8 0 7.77614 0 7.5ZM4 7.5C4 7.22386 4.22386 7 4.5 7H14.5C14.7761 7 15 7.22386 15 7.5C15 7.77614 14.7761 8 14.5 8H4.5C4.22386 8 4 7.77614 4 7.5ZM4 10.5C4 10.2239 4.22386 10 4.5 10H11.5C11.7761 10 12 10.2239 12 10.5C12 10.7761 11.7761 11 11.5 11H4.5C4.22386 11 4 10.7761 4 10.5ZM0 13.5C0 13.2239 0.223858 13 0.5 13H2.5C2.77614 13 3 13.2239 3 13.5C3 13.7761 2.77614 14 2.5 14H0.5C0.223858 14 0 13.7761 0 13.5ZM4 13.5C4 13.2239 4.22386 13 4.5 13H14.5C14.7761 13 15 13.2239 15 13.5C15 13.7761 14.7761 14 14.5 14H4.5C4.22386 14 4 13.7761 4 13.5Z" fill="currentColor"></path></svg>
-                    100 เดียวเที่ยวได้งาน
+                    {t('menu3')}
                   </a>
                   <a href="#" className="flex items-center p-4 hover:text-gray-300">
                   <svg stroke="currentColor" fill="none" strokeWidth="0" viewBox="0 0 15 15" className="w-5 h-5 mr-2" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" clipRule="evenodd" d="M0 1.5C0 1.22386 0.223858 1 0.5 1H2.5C2.77614 1 3 1.22386 3 1.5C3 1.77614 2.77614 2 2.5 2H0.5C0.223858 2 0 1.77614 0 1.5ZM4 1.5C4 1.22386 4.22386 1 4.5 1H14.5C14.7761 1 15 1.22386 15 1.5C15 1.77614 14.7761 2 14.5 2H4.5C4.22386 2 4 1.77614 4 1.5ZM4 4.5C4 4.22386 4.22386 4 4.5 4H11.5C11.7761 4 12 4.22386 12 4.5C12 4.77614 11.7761 5 11.5 5H4.5C4.22386 5 4 4.77614 4 4.5ZM0 7.5C0 7.22386 0.223858 7 0.5 7H2.5C2.77614 7 3 7.22386 3 7.5C3 7.77614 2.77614 8 2.5 8H0.5C0.223858 8 0 7.77614 0 7.5ZM4 7.5C4 7.22386 4.22386 7 4.5 7H14.5C14.7761 7 15 7.22386 15 7.5C15 7.77614 14.7761 8 14.5 8H4.5C4.22386 8 4 7.77614 4 7.5ZM4 10.5C4 10.2239 4.22386 10 4.5 10H11.5C11.7761 10 12 10.2239 12 10.5C12 10.7761 11.7761 11 11.5 11H4.5C4.22386 11 4 10.7761 4 10.5ZM0 13.5C0 13.2239 0.223858 13 0.5 13H2.5C2.77614 13 3 13.2239 3 13.5C3 13.7761 2.77614 14 2.5 14H0.5C0.223858 14 0 13.7761 0 13.5ZM4 13.5C4 13.2239 4.22386 13 4.5 13H14.5C14.7761 13 15 13.2239 15 13.5C15 13.7761 14.7761 14 14.5 14H4.5C4.22386 14 4 13.7761 4 13.5Z" fill="currentColor"></path></svg>
-                    สิทธิพิเศษ
+                   {t('menu5')}
                   </a>
                   <a href="#" className="flex items-center p-4 hover:text-gray-300">
                   <svg stroke="currentColor" fill="none" strokeWidth="0" viewBox="0 0 15 15" className="w-5 h-5 mr-2" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" clipRule="evenodd" d="M0 1.5C0 1.22386 0.223858 1 0.5 1H2.5C2.77614 1 3 1.22386 3 1.5C3 1.77614 2.77614 2 2.5 2H0.5C0.223858 2 0 1.77614 0 1.5ZM4 1.5C4 1.22386 4.22386 1 4.5 1H14.5C14.7761 1 15 1.22386 15 1.5C15 1.77614 14.7761 2 14.5 2H4.5C4.22386 2 4 1.77614 4 1.5ZM4 4.5C4 4.22386 4.22386 4 4.5 4H11.5C11.7761 4 12 4.22386 12 4.5C12 4.77614 11.7761 5 11.5 5H4.5C4.22386 5 4 4.77614 4 4.5ZM0 7.5C0 7.22386 0.223858 7 0.5 7H2.5C2.77614 7 3 7.22386 3 7.5C3 7.77614 2.77614 8 2.5 8H0.5C0.223858 8 0 7.77614 0 7.5ZM4 7.5C4 7.22386 4.22386 7 4.5 7H14.5C14.7761 7 15 7.22386 15 7.5C15 7.77614 14.7761 8 14.5 8H4.5C4.22386 8 4 7.77614 4 7.5ZM4 10.5C4 10.2239 4.22386 10 4.5 10H11.5C11.7761 10 12 10.2239 12 10.5C12 10.7761 11.7761 11 11.5 11H4.5C4.22386 11 4 10.7761 4 10.5ZM0 13.5C0 13.2239 0.223858 13 0.5 13H2.5C2.77614 13 3 13.2239 3 13.5C3 13.7761 2.77614 14 2.5 14H0.5C0.223858 14 0 13.7761 0 13.5ZM4 13.5C4 13.2239 4.22386 13 4.5 13H14.5C14.7761 13 15 13.2239 15 13.5C15 13.7761 14.7761 14 14.5 14H4.5C4.22386 14 4 13.7761 4 13.5Z" fill="currentColor"></path></svg>
-                    แบบสอบถาม
+                    {t('menu6')}
                   </a>    
                   </div>
                   

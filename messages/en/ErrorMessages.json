@@ -1,0 +1,6 @@
+{
+    "loginFailed": "Login failed",
+    "missingIdentifierOrPassword": "Missing identifier or password",
+    "noResponseFromServer": "No response from server",
+    "unknownError": "An unknown error occurred"
+  }
